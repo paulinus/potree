@@ -30,6 +30,7 @@ var paths = {
 		"src/FirstPersonControls.js",
 		"src/OrbitControls.js",
 		"src/EarthControls.js",
+		"src/KeyFramePlayer.js",
 		"src/LRU.js",
 		"src/PointCloudOctree.js",
 		"src/PointCloudOctreeGeometry.js",

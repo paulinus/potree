@@ -34,6 +34,8 @@ var orbitControls;
 var earthControls;
 var controls;
 
+var keyFramePlayer;
+
 var progressBar = new ProgressBar();
 
 var pointcloudPath = sceneProperties.path;
@@ -326,6 +328,9 @@ function initThree(){
 	});
 	useEarthControls();
 	
+	// create EARTH CONTROLS
+	keyFramePlayer = new KeyFramePlayer(camera, renderer.domElement);
+
 	// enable frag_depth extension for the interpolation shader, if available
 	renderer.context.getExtension("EXT_frag_depth");
 	
@@ -614,7 +619,12 @@ function update(){
 	camera.fov = fov;
 	
 	if(controls){
-		controls.update(clock.getDelta());
+		var delta = clock.getDelta();
+		if(!keyFramePlayer.playing){
+			controls.update(delta);
+		}else{
+			keyFramePlayer.update(delta);
+		}
 	}
 
 	// update progress bar
