@@ -839,6 +839,10 @@ Potree.Viewer = class PotreeViewer extends THREE.EventDispatcher{
 			this.earthControls.addEventListener('start', this.disableAnnotations.bind(this));
 			this.earthControls.addEventListener('end', this.enableAnnotations.bind(this));
 		}
+
+		{ // create KEY FRAME PLAYER
+			this.keyFramePlayer = new KeyFramePlayer(this);
+		}
 	};
 
 	toggleSidebar () {
@@ -1273,7 +1277,12 @@ Potree.Viewer = class PotreeViewer extends THREE.EventDispatcher{
 		
 		if (this.controls !== null) {
 			this.controls.setScene(scene);
-			this.controls.update(delta);
+
+			if(this.keyFramePlayer.playing){
+				this.keyFramePlayer.update(delta);
+			}else{
+				this.controls.update(delta);
+			}
 
 			this.scene.cameraP.position.copy(scene.view.position);
 			this.scene.cameraP.rotation.order = "ZXY";
