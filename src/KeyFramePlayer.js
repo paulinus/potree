@@ -42,17 +42,23 @@ KeyFramePlayer = function (viewer) {
 		scope.time = 0;
 	}
 
-	this.interpolateVector = function (name, alpha) {
+	this.interpolateVector = function (name, time) {
 		var num_points = scope.keyFrames.length;
-		var points = [];
+		var points = new Float32Array(3 * num_points);
+		var times = new Float32Array(num_points);
+		var result = new Float32Array(3);
+
 		for (var i = 0; i < num_points; ++i) {
-			points.push(scope.keyFrames[i][name]);
+			points[3 * i + 0] = scope.keyFrames[i][name].x;
+			points[3 * i + 1] = scope.keyFrames[i][name].y;
+			points[3 * i + 2] = scope.keyFrames[i][name].z;
+			times[i] = i;
 		}
-		for (var i = num_points; i < 4; ++i) {
-			points.push(scope.keyFrames[num_points - 1][name]);
-		}
-		var curve = new THREE.CatmullRomCurve3(points);
-		return curve.getPointAt(Math.min(1.0, alpha));
+
+		var interpolant = new THREE.CubicInterpolant(times, points, 3, result);
+		interpolant.evaluate(time);
+
+		return new THREE.Vector3(result[0], result[1], result[2]);
 	}
 
 	this.update = function (delta) {
@@ -63,8 +69,8 @@ KeyFramePlayer = function (viewer) {
 			var speed = 1.0;
 			var t = scope.time * speed;
 
-			var position = scope.interpolateVector('position', t / (num_points - 1));
-			var lookAt = scope.interpolateVector('lookAt', t / (num_points - 1));
+			var position = scope.interpolateVector('position', t);
+			var lookAt = scope.interpolateVector('lookAt', t);
 
 			scope.viewer.scene.view.position.copy(position);
 			scope.viewer.scene.view.lookAt(lookAt);
