@@ -19,6 +19,10 @@ KeyFramePlayer = function (viewer) {
 		scope.keyFrames.push(keyFrame);
 	};
 
+	this.removeLastKeyFrame = function () {
+		scope.keyFrames.pop();
+	}
+
 	this.getCurrentLookAt = function () {
 		let view = scope.viewer.scene.view;
 		let dir = view.direction.clone().multiplyScalar(10);
@@ -89,6 +93,11 @@ KeyFramePlayer = function (viewer) {
 					scope.recordKeyFrame();
 				} else {
 					scope.togglePlay();
+				}
+				break;
+			case 50:
+				if (event.altKey) {
+					scope.removeLastKeyFrame();
 				}
 				break;
 		}
